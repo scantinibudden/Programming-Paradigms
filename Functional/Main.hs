@@ -3,8 +3,6 @@ import NavesEspaciales
 import Test.HUnit
 import Data.List
 
-
-
 --Naves para pruebas:    
 contenedorSolo = Base Contenedor
 nave1 = Base Motor
