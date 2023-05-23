@@ -89,12 +89,7 @@ pruebaDeFuego ps = filter (puedeVolar . (flip maniobrar ps))
 
 -- rehacer este
 componentesPorNivel :: NaveEspacial -> Int -> Int
-componentesPorNivel _ 0 = 1
-componentesPorNivel n l = length (foldr (\_ ns -> foldr f [] ns) [n] [1 .. l])
-  where
-    f :: NaveEspacial -> [NaveEspacial] -> [NaveEspacial]
-    f (Base _) ls = ls
-    f (Módulo _ i d) ls = i : d : ls
+componentesPorNivel = foldNave (\ c -> (\i -> if i == 0 then 1 else 0)) (\c reci recd -> (\i -> if i == 0 then 1 else (reci (i-1)) + (recd (i-1))))
 
 
 anchoMaximo :: NaveEspacial -> Int -> (Int, Int)
