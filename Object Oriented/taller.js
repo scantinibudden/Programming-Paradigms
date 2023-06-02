@@ -1,4 +1,10 @@
+const NIVEL_INICIAL = 1;
 const MAX_ENERGIA = 100;
+const MIN_ATAQUE = 1;
+const MIN_DEFENSA = 1;
+const MIN_PODER = 1;
+const MIN_ENERGIA = 0;
+
 
 function daño(atacante, atacado) {
     let dañoPotencial = Math.round((10*atacante.nivel*atacante.ataque)/(atacado.nivel*atacado.defensa));
@@ -6,30 +12,94 @@ function daño(atacante, atacado) {
 }
 
 // Ejercicio 1
-
+function Slime(ataque, defensa) {
+    this.nivel = NIVEL_INICIAL;
+    this.energía = MAX_ENERGIA;
+    this.ataque = Math.max(MIN_ATAQUE, ataque);
+    this.defensa = Math.max(MIN_DEFENSA, defensa);
+}
 
 
 // Ejercicio 2
-
+Slime.prototype.actualizarEnergía = function(incremento) {
+    this.energía = Math.max(MIN_ENERGIA, Math.min(MAX_ENERGIA, this.energía + incremento))
+}
 
 
 // Ejercicio 3
+Slime.prototype.atacar = function(oponente) {
+    if(this.energía == MIN_ENERGIA)
+        return;
 
+    let d = daño(this,oponente);
+
+    this.actualizarEnergía(d);
+    oponente.actualizarEnergía(-d);
+}
 
 
 // Ejercicio 4
+Slime.prototype.duelo = function(oponente) {
+    let oponente_energía_init = oponente.energía;
+    let ganador;
 
+    this.atacar(oponente);
+    oponente.atacar(this);
+
+    if(oponente.energía < oponente_energía_init)
+        ganador = this;
+    else
+        ganador = oponente;
+    
+    ganador.nivel++;
+    return ganador;
+}
 
 
 // Ejercicio 5
+function SlimeSanador(ataque, defensa, poder) {
+    Slime.call(this, ataque, defensa);
 
+    this.poder = Math.max(MIN_PODER, poder);
+}
+
+SlimeSanador.prototype = Object.create(Slime.prototype);
+
+SlimeSanador.prototype.curar = function (paciente) {
+    paciente.actualizarEnergía(this.poder * this.nivel);
+}
 
 
 // Ejercicio 6
+Slime.prototype.reproducirse = function() {
+    let cost = Math.floor(100/this.nivel);
+    let baby_slime;
+
+    if(this.energía <= cost)
+        return;
+
+    this.actualizarEnergía(-cost);
+    baby_slime = Object.create(this);
+    baby_slime.nivel = 1;
+    baby_slime.energía = MAX_ENERGIA;
+
+    return baby_slime;
+}
+
+Slime.prototype.esDescendienteDe = function(otro) {
+    let antepasado_actual = this;
+    while(antepasado_actual != Object.getPrototypeOf(antepasado_actual)){
+        if(antepasado_actual == otro)
+            return true;
+
+        antepasado_actual = Object.getPrototypeOf(antepasado_actual);
+    }
+
+    return false;
+}
 
 
-
-//Tests
+// Tests
 
 function testEjemplo(res) {
   res.write("\n|| Probando la suma ||\n");
@@ -56,6 +126,7 @@ function testEjercicio1(res) {
     let slimeDefensivo = new Slime(10, 20);
     let slimeBalanceado = new Slime(15, 15);
     let slimeDesinflado = new Slime(0, 0);
+    let slimeAntipatico = new Slime(-1, -2);
     let todosLosSlimes = new Array(slimeOfensivo, slimeDefensivo, slimeBalanceado, slimeDesinflado);
 	res.write(`El slime ofensivo ${si_o_no(slimeOfensivo.ataque == 20)} tiene ataque 20.`, slimeOfensivo.ataque == 20);
 	res.write(`El slime ofensivo ${si_o_no(slimeOfensivo.defensa == 10)} tiene defensa 10.`, slimeOfensivo.defensa == 10);
@@ -63,8 +134,10 @@ function testEjercicio1(res) {
 	res.write(`El slime defensivo ${si_o_no(slimeDefensivo.defensa == 20)} tiene defensa 20.`, slimeDefensivo.defensa == 20);
 	res.write(`El slime balanceado ${si_o_no(slimeBalanceado.ataque == 15)} tiene ataque 15.`, slimeBalanceado.ataque == 15);
 	res.write(`El slime balanceado ${si_o_no(slimeBalanceado.defensa == 15)} tiene defensa 15.`, slimeBalanceado.defensa == 15);
-	res.write(`El slime balanceado ${si_o_no(slimeDesinflado.ataque == 1)} tiene ataque 1.`, slimeDesinflado.ataque == 1);
-	res.write(`El slime balanceado ${si_o_no(slimeDesinflado.defensa == 1)} tiene defensa 1.`, slimeDesinflado.defensa == 1);
+	res.write(`El slime desinflado ${si_o_no(slimeDesinflado.ataque == 1)} tiene ataque 1.`, slimeDesinflado.ataque == 1);
+	res.write(`El slime desinflado ${si_o_no(slimeDesinflado.defensa == 1)} tiene defensa 1.`, slimeDesinflado.defensa == 1);
+    res.write(`El slime antipatico ${si_o_no(slimeAntipatico.ataque == 1)} tiene ataque 1.`, slimeAntipatico.ataque == 1);
+	res.write(`El slime antipatico ${si_o_no(slimeAntipatico.defensa == 1)} tiene defensa 1.`, slimeAntipatico.defensa == 1);
     let todosNivel1 = todosLosSlimes.reduce((res, x) => x.nivel == 1 && res, true);
     let todosEnergíaMáxima = todosLosSlimes.reduce((res, x) => x.energía == MAX_ENERGIA && res, true);
 	res.write(`Se verifica que ${si_o_no(todosNivel1)} todos los slimes tienen nivel 1.`, todosNivel1);
@@ -156,6 +229,9 @@ function testEjercicio5(res) {
     slimeOfensivo.actualizarEnergía(-39);
     slimeBalanceado.actualizarEnergía(-13);
     let slimeSanador = new SlimeSanador(10, 15, 20);
+    let slimeSanadorJr = new SlimeSanador(10, 15, -1);
+    res.write(`El slime sanador ${si_o_no(slimeSanador.poder == 20)} tiene 20 puntos de poder.`, slimeSanador.poder == 20);
+    res.write(`El slime sanador junior ${si_o_no(slimeSanadorJr.poder == 1)} tiene 1 punto de poder.`, slimeSanadorJr.poder == 1);
     slimeSanador.curar(slimeOfensivo);
     res.write(`El slime sanador cura al ofensivo, quien ${si_o_no(slimeOfensivo.energía == MAX_ENERGIA-19)} recupera 20 puntos de energía.`, slimeOfensivo.energía == MAX_ENERGIA-19);
     slimeSanador.curar(slimeBalanceado);
@@ -174,7 +250,7 @@ function testEjercicio5(res) {
     
 // Test Ejercicio 6
 function testEjercicio6(res) {
-    //Todos los slimes como quedaron hasta ahora.
+    // Todos los slimes como quedaron hasta ahora.
     let slimeOfensivo = new Slime(20, 10);
     let slimeDesinflado = new Slime(0, 0);
     let slimeBalanceado = new Slime(15, 15);
