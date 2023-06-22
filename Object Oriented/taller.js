@@ -63,7 +63,7 @@ function SlimeSanador(ataque, defensa, poder) {
     this.poder = Math.max(MIN_PODER, poder);
 }
 
-SlimeSanador.prototype = Object.create(Slime.prototype);
+Object.setPrototypeOf(HealerSlime.prototype, Slime.prototype); // esto no funca (probar arreglo)
 
 SlimeSanador.prototype.curar = function (paciente) {
     paciente.actualizarEnergía(this.poder * this.nivel);
@@ -71,7 +71,7 @@ SlimeSanador.prototype.curar = function (paciente) {
 
 
 // Ejercicio 6
-Slime.prototype.reproducirse = function() {
+Slime.prototype.reproducirse = function() { // no pasa los tests?
     let cost = Math.floor(100/this.nivel);
     let baby_slime;
 
