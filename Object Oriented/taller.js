@@ -63,7 +63,7 @@ function SlimeSanador(ataque, defensa, poder) {
     this.poder = Math.max(MIN_PODER, poder);
 }
 
-Object.setPrototypeOf(HealerSlime.prototype, Slime.prototype); // esto no funca (probar arreglo)
+Object.setPrototypeOf(SlimeSanador.prototype, Slime.prototype);
 
 SlimeSanador.prototype.curar = function (paciente) {
     paciente.actualizarEnergía(this.poder * this.nivel);
@@ -71,7 +71,7 @@ SlimeSanador.prototype.curar = function (paciente) {
 
 
 // Ejercicio 6
-Slime.prototype.reproducirse = function() { // no pasa los tests?
+Slime.prototype.reproducirse = function() {
     let cost = Math.floor(100/this.nivel);
     let baby_slime;
 
@@ -87,12 +87,12 @@ Slime.prototype.reproducirse = function() { // no pasa los tests?
 }
 
 Slime.prototype.esDescendienteDe = function(otro) {
-    let antepasado_actual = this;
-    while(antepasado_actual != Object.getPrototypeOf(antepasado_actual)){
-        if(antepasado_actual == otro)
+    let descendiente = this;
+    while(descendiente != null){
+        if(descendiente === otro)
             return true;
-
-        antepasado_actual = Object.getPrototypeOf(antepasado_actual);
+        
+        descendiente = Object.getPrototypeOf(descendiente);
     }
 
     return false;
@@ -250,7 +250,7 @@ function testEjercicio5(res) {
     
 // Test Ejercicio 6
 function testEjercicio6(res) {
-    // Todos los slimes como quedaron hasta ahora.
+    //Todos los slimes como quedaron hasta ahora.
     let slimeOfensivo = new Slime(20, 10);
     let slimeDesinflado = new Slime(0, 0);
     let slimeBalanceado = new Slime(15, 15);
