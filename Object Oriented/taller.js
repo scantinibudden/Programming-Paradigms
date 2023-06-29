@@ -87,7 +87,7 @@ Slime.prototype.reproducirse = function() {
 }
 
 Slime.prototype.esDescendienteDe = function(otro) {
-    let descendiente = this;
+    let descendiente = Object.getPrototypeOf(this);
     while(descendiente != null){
         if(descendiente === otro)
             return true;
