@@ -87,7 +87,6 @@ pruebaDeFuego ps = filter (puedeVolar . (flip maniobrar ps))
 
 -- Ejercicio 8
 
--- rehacer este
 componentesPorNivel :: NaveEspacial -> Int -> Int
 componentesPorNivel = foldNave (\ c -> (\i -> if i == 0 then 1 else 0)) (\c reci recd -> (\i -> if i == 0 then 1 else (reci (i-1)) + (recd (i-1))))
 

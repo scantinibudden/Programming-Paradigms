@@ -31,7 +31,7 @@ Slime.prototype.atacar = function(oponente) {
     if(this.energía == MIN_ENERGIA)
         return;
 
-    let d = daño(this,oponente);
+    let d = daño(this, oponente);
 
     this.actualizarEnergía(d);
     oponente.actualizarEnergía(-d);
@@ -80,6 +80,7 @@ Slime.prototype.reproducirse = function() {
 
     this.actualizarEnergía(-cost);
     baby_slime = Object.create(this);
+    
     baby_slime.nivel = 1;
     baby_slime.energía = MAX_ENERGIA;
 
@@ -126,8 +127,9 @@ function testEjercicio1(res) {
     let slimeDefensivo = new Slime(10, 20);
     let slimeBalanceado = new Slime(15, 15);
     let slimeDesinflado = new Slime(0, 0);
-    let slimeAntipatico = new Slime(-1, -2);
+    
     let todosLosSlimes = new Array(slimeOfensivo, slimeDefensivo, slimeBalanceado, slimeDesinflado);
+
 	res.write(`El slime ofensivo ${si_o_no(slimeOfensivo.ataque == 20)} tiene ataque 20.`, slimeOfensivo.ataque == 20);
 	res.write(`El slime ofensivo ${si_o_no(slimeOfensivo.defensa == 10)} tiene defensa 10.`, slimeOfensivo.defensa == 10);
 	res.write(`El slime defensivo ${si_o_no(slimeDefensivo.ataque == 10)} tiene ataque 10.`, slimeDefensivo.ataque == 10);
@@ -136,17 +138,28 @@ function testEjercicio1(res) {
 	res.write(`El slime balanceado ${si_o_no(slimeBalanceado.defensa == 15)} tiene defensa 15.`, slimeBalanceado.defensa == 15);
 	res.write(`El slime desinflado ${si_o_no(slimeDesinflado.ataque == 1)} tiene ataque 1.`, slimeDesinflado.ataque == 1);
 	res.write(`El slime desinflado ${si_o_no(slimeDesinflado.defensa == 1)} tiene defensa 1.`, slimeDesinflado.defensa == 1);
-    res.write(`El slime antipatico ${si_o_no(slimeAntipatico.ataque == 1)} tiene ataque 1.`, slimeAntipatico.ataque == 1);
-	res.write(`El slime antipatico ${si_o_no(slimeAntipatico.defensa == 1)} tiene defensa 1.`, slimeAntipatico.defensa == 1);
     let todosNivel1 = todosLosSlimes.reduce((res, x) => x.nivel == 1 && res, true);
     let todosEnergíaMáxima = todosLosSlimes.reduce((res, x) => x.energía == MAX_ENERGIA && res, true);
 	res.write(`Se verifica que ${si_o_no(todosNivel1)} todos los slimes tienen nivel 1.`, todosNivel1);
 	res.write(`Se verifica que ${si_o_no(todosEnergíaMáxima)} todos los slimes tienen la máxima energía posible.`, todosEnergíaMáxima);
+
+  //mis tests
+  let slimeAntipatico = new Slime(-1, -2);
+  let slimeEspada = new Slime(25, -25);
+  let slimeEscudo = new Slime(-25, 25);
+
+  res.write(`El slime antipatico ${si_o_no(slimeAntipatico.ataque == 1)} tiene ataque 1.`, slimeAntipatico.ataque == 1);
+  res.write(`El slime antipatico ${si_o_no(slimeAntipatico.defensa == 1)} tiene defensa 1.`, slimeAntipatico.defensa == 1);
+  res.write(`El slime espada ${si_o_no(slimeEspada.ataque == 25)} tiene ataque 1.`, slimeEspada.ataque == 25);
+  res.write(`El slime espada ${si_o_no(slimeEspada.defensa == 1)} tiene defensa 1.`, slimeEspada.defensa == 1);
+  res.write(`El slime escudo ${si_o_no(slimeEscudo.ataque == 1)} tiene ataque 1.`, slimeEscudo.ataque == 1);
+  res.write(`El slime escudo ${si_o_no(slimeEscudo.defensa == 25)} tiene defensa 1.`, slimeEscudo.defensa == 25);
 }
 
 // Test Ejercicio 2
 function testEjercicio2(res) {
     let slimeBalanceado = new Slime(15, 15);
+
     res.write(`El slime balanceado ${si_o_no(slimeBalanceado.energía == MAX_ENERGIA)} empieza con la máxima energía posible.`, slimeBalanceado.energía == MAX_ENERGIA);
     slimeBalanceado.actualizarEnergía(20);
     res.write(`Después de comer, ${si_o_no(slimeBalanceado.energía == MAX_ENERGIA)} sigue teniendo la misma energía (ya era la máxima posible).`, slimeBalanceado.energía == MAX_ENERGIA);
@@ -156,6 +169,12 @@ function testEjercicio2(res) {
     res.write(`Después de caerse por un precipicio, ${si_o_no(slimeBalanceado.energía == 0)} se quedó sin energía.`, slimeBalanceado.energía == 0);
     slimeBalanceado.actualizarEnergía(MAX_ENERGIA+100);
     res.write(`Pero en el fondo del precipicio encontró mucha comida y ${si_o_no(slimeBalanceado.energía == MAX_ENERGIA)} se recuperó.`, slimeBalanceado.energía == MAX_ENERGIA);
+
+    //mis tests
+    slimeBalanceado.actualizarEnergía(-MAX_ENERGIA - 25);
+    res.write(`Y despues se cayo nuevamente por otro precipicio y ${si_o_no(slimeBalanceado.energía == MIN_ENERGIA)} se quedo sin energia.`, slimeBalanceado.energía == MIN_ENERGIA);
+    slimeBalanceado.actualizarEnergía(25);
+    res.write(`Por suerte habia un local de empanadas ahi abajo y luego de comer ${si_o_no(slimeBalanceado.energía == 25)} recupero un poco de energia.`, slimeBalanceado.energía == 25);
 }
 
 // Test Ejercicio 3
@@ -165,6 +184,7 @@ function testEjercicio3(res) {
     let slimeBalanceado = new Slime(15, 15);
     let slimeSinEnergía = new Slime(20, 20);
     slimeSinEnergía.energía = 0;
+
     slimeOfensivo.atacar(slimeDefensivo);
     res.write(`El slime ofensivo ataca al defensivo y su energía ${si_o_no(slimeOfensivo.energía == MAX_ENERGIA)} se mantiene igual (ya era la máxima posible).`, slimeOfensivo.energía == MAX_ENERGIA);
     res.write(`El slime defensivo ${si_o_no(slimeDefensivo.energía == MAX_ENERGIA-10)} perdió 10 puntos de energía.`, slimeDefensivo.energía == MAX_ENERGIA-10);
@@ -182,6 +202,15 @@ function testEjercicio3(res) {
     slimeSinEnergía.atacar(slimeBalanceado);
     res.write(`El slime sin energía intenta atacar al balanceado y su esfuerzo ${si_o_no(slimeBalanceado.energía == MAX_ENERGIA)} es inútil.`, slimeBalanceado.energía == MAX_ENERGIA);
 
+    // mis tests
+    let slimeEspada = new Slime(25, -25);
+    let slimeEscudo = new Slime(-25, 25);
+
+    slimeEspada.atacar(slimeEscudo);
+    res.write(`El slime espada ataca al slime escudo y su energía ${si_o_no(slimeEscudo.energía == MAX_ENERGIA-10)} baja.`, slimeEscudo.energía == MAX_ENERGIA-10);
+    slimeEscudo.actualizarEnergía(-MAX_ENERGIA+5);
+    slimeEspada.atacar(slimeEscudo);
+    res.write(`El slime espada ataca al slime escudo y ${si_o_no(slimeEscudo.energía == MIN_ENERGIA)} se queda sin energia.`, slimeEscudo.energía == MIN_ENERGIA);
 }
 
 // Test Ejercicio 4
@@ -217,6 +246,24 @@ function testEjercicio4(res) {
     let ganador6 = slimeSinEnergía.duelo(slimeOfensivo);
     res.write(`El slime sin energía reta a duelo al ofensivo y ${si_o_no(ganador6 === slimeOfensivo)} pierde (no puede hacerle daño).`, ganador6 == slimeOfensivo);
     res.write(`El slime ofensivo ahora ${si_o_no(slimeOfensivo.nivel == 2)} tiene nivel 2.`, slimeOfensivo.nivel == 2);
+
+    // mis tests
+    let slimeEspada = new Slime(25, -25);
+    let slimeEscudo = new Slime(-25, 25);
+    let slimeArquero = new Slime(15, 10);
+    let slimeAsesino = new Slime(10, 15);
+
+    let ganador7 = slimeEspada.duelo(slimeEscudo);
+    res.write(`El slime espada reta a duelo al escudo y ${si_o_no(ganador7 === slimeEscudo)} gana el escudo.`, ganador7 == slimeEscudo);
+    let ganador8 = slimeEspada.duelo(slimeEscudo);
+    res.write(`El slime espada reta a duelo al escudo y ${si_o_no(ganador8 === slimeEscudo)} gana el escudo.`, ganador8 == slimeEscudo);
+    res.write(`El slime escudo ahora ${si_o_no(slimeEscudo.nivel == 3)} tiene nivel 3.`, slimeEscudo.nivel == 3);
+    let ganador9 = slimeEscudo.duelo(slimeEspada);
+    res.write(`El slime escudo reta a duelo al espada y ${si_o_no(ganador9 === slimeEscudo)} gana el escudo.`, ganador9 == slimeEscudo);
+    let ganador10 = slimeAsesino.duelo(slimeArquero);
+    res.write(`El slime asesino reta a duelo al arquero y ${si_o_no(ganador10 === slimeArquero)} gana el arquero.`, ganador10 == slimeArquero);
+    let ganador11 = slimeArquero.duelo(slimeAsesino);
+    res.write(`El slime arquero reta a duelo al asesino y ${si_o_no(ganador11 === slimeArquero)} gana el arquero.`, ganador11 == slimeArquero);
 }
 
 // Test Ejercicio 5
@@ -229,9 +276,8 @@ function testEjercicio5(res) {
     slimeOfensivo.actualizarEnergía(-39);
     slimeBalanceado.actualizarEnergía(-13);
     let slimeSanador = new SlimeSanador(10, 15, 20);
-    let slimeSanadorJr = new SlimeSanador(10, 15, -1);
+    
     res.write(`El slime sanador ${si_o_no(slimeSanador.poder == 20)} tiene 20 puntos de poder.`, slimeSanador.poder == 20);
-    res.write(`El slime sanador junior ${si_o_no(slimeSanadorJr.poder == 1)} tiene 1 punto de poder.`, slimeSanadorJr.poder == 1);
     slimeSanador.curar(slimeOfensivo);
     res.write(`El slime sanador cura al ofensivo, quien ${si_o_no(slimeOfensivo.energía == MAX_ENERGIA-19)} recupera 20 puntos de energía.`, slimeOfensivo.energía == MAX_ENERGIA-19);
     slimeSanador.curar(slimeBalanceado);
@@ -245,6 +291,20 @@ function testEjercicio5(res) {
     res.write(`El slime sanador ${si_o_no(slimeSanador.energía == MAX_ENERGIA)} se recuperó por completo.`, slimeSanador.energía == MAX_ENERGIA);
     slimeSanador.curar(slimeDesinflado);
     res.write(`El slime sanador cura al desinflado, quien ${si_o_no(slimeDesinflado.energía == MAX_ENERGIA-60)} recupera 40 puntos de energía.`, slimeDesinflado.energía == MAX_ENERGIA-60);
+    
+    // mis tests
+    let slimeSanadorJr = new SlimeSanador(10, 15, -1);
+    let slimeEspada = new Slime(25, -25);
+
+    slimeEspada.actualizarEnergía(-2);
+
+    res.write(`El slime sanador junior ${si_o_no(slimeSanadorJr.poder == 1)} tiene 1 punto de poder.`, slimeSanadorJr.poder == 1);
+    slimeSanadorJr.curar(slimeEspada);
+    res.write(`El slime sanador junior cura al espada, quien ${si_o_no(slimeEspada.energía == MAX_ENERGIA-1)} recupera 1 puntos de energía.`, slimeEspada.energía == MAX_ENERGIA-1);
+    slimeSanadorJr.curar(slimeEspada);
+    res.write(`El slime sanador junior cura al espada, quien ${si_o_no(slimeEspada.energía == MAX_ENERGIA)} se recuperó por completo.`, slimeEspada.energía == MAX_ENERGIA);
+    slimeSanadorJr.curar(slimeEspada);
+    res.write(`El slime sanador junior cura al espada, quien ${si_o_no(slimeEspada.energía != MAX_ENERGIA)} le afecto estando ya con energia al maximo.`, slimeEspada.energía == MAX_ENERGIA);
 }
     
     
@@ -264,6 +324,7 @@ function testEjercicio6(res) {
     slimeDesinflado.actualizarEnergía(-60);
     slimeOfensivo.actualizarEnergía(-5);
     slimeSinEnergía.energía = 0;
+
     let intento1 = slimeSinEnergía.reproducirse();
     res.write(`El slime sin energía intenta reproducirse pero ${si_o_no(intento1 === undefined)} le falta energía.`, intento1 === undefined);
     let intento2 = slimeDesinflado.reproducirse();
@@ -300,6 +361,44 @@ function testEjercicio6(res) {
     }
     res.write(`El slime ofensivo ${si_o_no(cantDescendientes(slimeOfensivo) == 1)} tiene un descendiente.`, cantDescendientes(slimeOfensivo) == 1);
     res.write(`El slime defensivo ${si_o_no(cantDescendientes(slimeDefensivo) == 1)} tiene un descendiente.`, cantDescendientes(slimeDefensivo) == 1);
-    res.write(`El slime balanceado ${si_o_no(cantDescendientes(slimeBalanceado) != 0)} tiene descendencia.`, cantDescendientes(slimeDefensivo) == 1);
-    res.write(`El slime sanador ${si_o_no(cantDescendientes(slimeSanador) == 2)} tiene dos descendientes.`, cantDescendientes(slimeBalanceado) == 0);
+    res.write(`El slime balanceado ${si_o_no(cantDescendientes(slimeBalanceado) != 0)} tiene descendencia.`, cantDescendientes(slimeBalanceado) == 0);
+    res.write(`El slime sanador ${si_o_no(cantDescendientes(slimeSanador) == 2)} tiene dos descendientes.`, cantDescendientes(slimeSanador) == 2);
+
+    // mis tests
+    let slimeOriginal = new Slime(1000, 1000);
+    slimeOriginal.nivel = 10;
+    res.write("El slime original tuvo a slime primogenito");
+    let slimePrimogenito = slimeOriginal.reproducirse();
+    slimePrimogenito.nivel = 5;
+    res.write("El slime original tuvo a slime asesino");
+    let slimeAsesino = slimeOriginal.reproducirse();
+    slimeAsesino.nivel = 5;
+    res.write("El slime original tuvo a slime arquero");
+    let slimeArquero = slimeOriginal.reproducirse();
+    slimeArquero.nivel = 5;
+    res.write("El slime original tuvo a slime olvidado");
+    let slimeOlvidado = slimeOriginal.reproducirse();
+    slimeOlvidado.nivel = 5;
+    res.write("El slime olvidado tuvo a slime curador");
+    let slimeCurador = slimeOlvidado.reproducirse();
+    slimeCurador.nivel = 2;
+    res.write("El slime primogenito tuvo a slime espada");
+    let slimeEspada = slimePrimogenito.reproducirse();
+    res.write("El slime olvidado tuvo a slime escudo");
+    let slimeEscudo = slimeOlvidado.reproducirse();
+    res.write("El slime curador tuvo a slime curador junior");
+    let slimeCuradorJr = slimeCurador.reproducirse();
+
+    todosLosSlimes = new Array(slimeOriginal, slimePrimogenito, slimeArquero, slimeAsesino, slimeCurador, slimeOlvidado, slimeCuradorJr, slimeEscudo, slimeEspada);
+
+    res.write(`El slime original ${si_o_no(cantDescendientes(slimeOriginal) == 8)} tiene 8 descendientes.`, cantDescendientes(slimeOriginal) == 8);
+    res.write(`El slime primogenito ${si_o_no(cantDescendientes(slimePrimogenito) == 1)} tiene un descendiente.`, cantDescendientes(slimePrimogenito) == 1);
+    res.write(`El slime asesino ${si_o_no(cantDescendientes(slimeAsesino) != 0)} tiene un descendiente.`, cantDescendientes(slimeAsesino) == 0);
+    res.write(`El slime arquero ${si_o_no(cantDescendientes(slimeArquero) != 0)} tiene un descendiente.`, cantDescendientes(slimeArquero) == 0);
+    res.write(`El slime olvidado ${si_o_no(cantDescendientes(slimeOlvidado) == 3)} tiene tres descendientes.`, cantDescendientes(slimeOlvidado) == 3);
+    res.write(`El slime curador ${si_o_no(cantDescendientes(slimeCurador) == 1)} tiene un descendiente.`, cantDescendientes(slimeCurador) == 1);
+    res.write(`El slime espada ${si_o_no(cantDescendientes(slimeEspada) != 0)} tiene descendientes.`, cantDescendientes(slimeEspada) == 0);
+    res.write(`El slime escudo ${si_o_no(cantDescendientes(slimeEscudo) != 0)} tiene descendientes.`, cantDescendientes(slimeEscudo) == 0);
+    res.write(`El slime curador junior ${si_o_no(cantDescendientes(slimeCuradorJr) != 0)} tiene descendientes.`, cantDescendientes(slimeCuradorJr) == 0);
+
 }
