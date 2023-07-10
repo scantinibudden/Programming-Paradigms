@@ -68,7 +68,7 @@ impactarNave Pequeño (Módulo Escudo i d) = Módulo Escudo i d
 impactarNave Grande n = if poderDeAtaque n > 0 then impactarNave Pequeño n else Base Contenedor
 impactarNave _ _ = Base Contenedor
 
--- no se usa foldNave ya que no debemos recorrer toda la estructura sino solo los laterales.
+-- no se usa foldNave ya que queremos recurcion primitiva, no estructural. Queremos tener el resto de la nave similar a como funciona recr
 impactar :: Peligro -> NaveEspacial -> NaveEspacial
 impactar (_, 0, arma) n = impactarNave arma n
 impactar _ (Base c) = Base c
